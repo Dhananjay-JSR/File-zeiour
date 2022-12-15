@@ -56,7 +56,7 @@ public:
             auto timeEnd = std::chrono::steady_clock::now();
             std::cout<<"Serving From ";
             PrintMessage("Cache");
-            std::cout<<"\nThe Content of File "<<Key<<" is"<<"\nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<std::endl<<LocalNode->Value<<std::endl;
+            std::cout<<"\nThe Content of File "<<Key<<" is"<<"\nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<"-----------------------------------"<<std::endl<<LocalNode->Value<<std::endl;
         }else{
             auto timeStart = std::chrono::steady_clock::now();
             auto TempNode = new CacheItems(Key, FetchFile(Key));
@@ -73,7 +73,7 @@ public:
             auto timeEnd = std::chrono::steady_clock::now();
             std::cout<<"Serving From ";
             PrintMessage("Main Source");
-            std::cout<<"\nThe Content of File "<<Key<<" is"<<"\nSubsequent Search will be Faster \nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<std::endl<< TempNode->Value<<std::endl;
+            std::cout<<"\nThe Content of File "<<Key<<" is"<<"\nSubsequent Search will be Faster \nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<"-----------------------------------"<<std::endl<< TempNode->Value<<std::endl;
         }
     }
 };
