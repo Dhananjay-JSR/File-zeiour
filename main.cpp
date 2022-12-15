@@ -8,8 +8,7 @@
 #include "fstream"
 #include "list"
 #include "map"
-
-
+#include <csignal>
 std::string FetchFile(std::string FileName){
     std::string newFileName = "src/"+FileName;
     std::fstream FILE(newFileName,std::ios::in);
@@ -19,6 +18,12 @@ std::string FetchFile(std::string FileName){
     }
     FILE.close();
     return Content;
+}
+void PrintMessage(std::string TEXT){
+    auto Element = ftxui::text(TEXT) | ftxui::bold | ftxui::underlined |ftxui::color(ftxui::Color::Black);
+    auto screen = ftxui::Screen::Create(ftxui::Dimension::Full(),ftxui::Dimension::Fit(Element));
+    Render(screen, Element);
+    screen.Print();
 }
 class Cache{
     struct CacheItems{
@@ -44,12 +49,14 @@ public:
             for (auto i = CacheList.cbegin(); i != CacheList.cbegin();i++ ) {
                 if (LocalNode==*i){
                     auto temp = CacheList.front();
-                    CacheList.insert(i,temp);//This Inserts Front Node into iter
-                    CacheList.insert(CacheList.cbegin(),LocalNode); //insert node into iter
+                    CacheList.insert(i,temp);
+                    CacheList.insert(CacheList.cbegin(),LocalNode);
                 }
             }
             auto timeEnd = std::chrono::steady_clock::now();
-            std::cout<<"Serving From Cache "<<"The Content of File "<<Key<<" is"<<"\nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<LocalNode->Value<<std::endl;
+            std::cout<<"Serving From ";
+            PrintMessage("Cache");
+            std::cout<<"\nThe Content of File "<<Key<<" is"<<"\nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<std::endl<<LocalNode->Value<<std::endl;
         }else{
             auto timeStart = std::chrono::steady_clock::now();
             auto TempNode = new CacheItems(Key, FetchFile(Key));
@@ -64,12 +71,13 @@ public:
                 CacheList.push_front(TempNode);
             }
             auto timeEnd = std::chrono::steady_clock::now();
-            std::cout<<"Serving From Main Source "<<"The Content of File "<<Key<<" is"<<"\nSubsequent Search will be Faster \nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl << TempNode->Value<<std::endl;
+            std::cout<<"Serving From ";
+            PrintMessage("Main Source");
+            std::cout<<"\nThe Content of File "<<Key<<" is"<<"\nSubsequent Search will be Faster \nTime Taken "<<std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd-timeStart).count()<<"ms"<<std::endl <<std::endl<< TempNode->Value<<std::endl;
         }
     }
 };
 void GetFolderContent(std::vector<std::string> *fileItems){
-//std::vector<std::string> fileItems ;
 std::filesystem::path folder(std::filesystem::current_path()/"src");
 if (std::filesystem::is_directory(folder)){
     for (auto i : std::filesystem::directory_iterator(folder)) {
@@ -95,13 +103,17 @@ std::cout<<"Place Your File Inside Src Directory for caching";
    screen.Loop(menu);
    return FileEntries.at(selected);
  }
+void signal_callback_handler(int signum) {
+    exit(signum);
+}
 int main(){
+    signal(SIGINT, signal_callback_handler);
     Cache C1(2);
     int flag = 1;
     while(1){
-    std::string FileSelected = RenderMenu();
-    C1.get(FileSelected);
-    system("pause");
+        system("cls");
+        std::string FileSelected = RenderMenu();
+        C1.get(FileSelected);
+        std::cin.get();
     }
-
 }
