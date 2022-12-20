@@ -90,6 +90,7 @@ if (std::filesystem::is_directory(folder)){
 std::filesystem::create_directories(std::filesystem::current_path()/"src");
 std::cout<<"File Created"<<std::endl;
 std::cout<<"Place Your File Inside Src Directory for caching";
+exit(1);
 }
 }
  std::string RenderMenu(){
